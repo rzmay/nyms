@@ -9,7 +9,7 @@ module.exports = async function puzzleHandler() {
 
   try {
     const currentPuzzle = await getPuzzle();
-    if (dayjs(currentPuzzle?.date) === day) throw new Error(`Puzzle already exists for ${day.format('M/D/YYYY')}`);
+    if (dayjs(currentPuzzle?.date).isSame(day, 'day')) throw new Error(`Puzzle already exists for ${day.format('M/D/YYYY')}`);
 
     await writePuzzle({
       ...(await generatePuzzle()),

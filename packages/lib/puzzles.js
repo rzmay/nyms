@@ -27,8 +27,8 @@ module.exports.writePuzzle = async function writePuzzle(puzzle) {
     range: RANGE,
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
-    resource: {
-      values: [puzzle.date, puzzle.start, puzzle.end, puzzle.par],
+    requestBody: {
+      values: [[puzzle.date, puzzle.start, puzzle.end, puzzle.par].map((v) => v.toString())],
     },
   }).then((response) => response.data);
 };

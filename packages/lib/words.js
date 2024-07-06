@@ -57,7 +57,6 @@ module.exports.getRandomWord = async function getRandomWord() {
 module.exports.generatePuzzle = async function generatePuzzle(iterations = 5) {
   // Get a random word to start
   const startWord = await module.exports.getRandomWord();
-  console.log('startword = ', startWord);
   const rhymesWithStart = await fetchRelatedWords(startWord, 'rhyme');
   let par = iterations;
 
