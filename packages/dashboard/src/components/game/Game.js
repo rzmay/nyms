@@ -3,17 +3,17 @@
 import clsx from 'clsx';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
-import readFromStorage from '../../helpers/readFromStorage';
 import useRelatedWords from '../../hooks/useRelatedWords';
 import useScreenSize from '../../hooks/useScreenSize';
+import useStorage from '../../hooks/useStorage';
 import Instructions from './Instructions';
 import Victory from './Victory';
 import Words from './Words';
 
 export default function Game({ puzzle }) {
   const [screenWidth, screenHeight] = useScreenSize();
-  const [chain, setChain] = React.useState(readFromStorage('chain', [{ word: puzzle.start, relation: null }]));
-  const [positions, setPositions] = React.useState(readFromStorage('positions', []));
+  const [chain, setChain] = useStorage('chain', [{ word: puzzle.start, relation: null }]);
+  const [positions, setPositions] = useStorage('positions', []);
   const positionsRef = React.useRef(positions);
   const [hoveredWord, setHoveredWord] = React.useState(null);
   const [scale, setScale] = React.useState(1);
@@ -46,7 +46,7 @@ export default function Game({ puzzle }) {
     ];
 
     return setPositions(positionsRef.current);
-  }, [getKey]);
+  }, [getKey, setPositions]);
 
   const getPosition = React.useCallback((word, relation) => {
     const key = getKey(word, relation);
@@ -91,17 +91,7 @@ export default function Game({ puzzle }) {
     setPosition,
     getPosition,
     getKey,
-  }), [chain, hoveredWord, currentWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, getActivePositions, setPosition, getPosition, getKey]);
-
-  // Save chain in local storage when changed from default
-  React.useEffect(() => {
-    if (chain) localStorage.setItem('chain', JSON.stringify(chain));
-  }, [chain]);
-
-  // Save chain in local storage when changed from default
-  React.useEffect(() => {
-    if (positions) localStorage.setItem('positions', JSON.stringify(positions));
-  }, [positions]);
+  }), [chain, setChain, hoveredWord, currentWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, getActivePositions, setPosition, getPosition, getKey]);
 
   // Update positions ref
   React.useEffect(() => {
@@ -118,7 +108,7 @@ export default function Game({ puzzle }) {
       setScale(1);
       setChain([{ word: puzzle.start }]);
     }
-  }, [chain, puzzle]);
+  }, [chain, puzzle, setChain, setPositions]);
 
   return (
     <div className="w-full h-full overflow-hidden">

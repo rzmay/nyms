@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function useScreenSize() {
-  const [size, setSize] = React.useState([0, 0]);
+  const [size, setSize] = React.useState([1, 1]);
 
   React.useLayoutEffect(() => {
     if (!window) return;
