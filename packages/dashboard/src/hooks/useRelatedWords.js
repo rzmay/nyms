@@ -6,10 +6,10 @@ import React from 'react';
 const CACHE = {};
 
 export default function useRelatedWords(currentWord, chain, allowRhymes) {
-  const [relatedWords, setRelatedWords] = React.useState();
+  const [relatedWords, setRelatedWords] = React.useState([]);
 
   React.useEffect(() => {
-    setRelatedWords(CACHE[currentWord.word]);
+    setRelatedWords(CACHE[currentWord.word] || []);
 
     getRelatedWords(currentWord.word, allowRhymes)
       .then((response) => {

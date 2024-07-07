@@ -13,7 +13,7 @@ export default function Words() {
 
   // Zoom to fit all words
   React.useEffect(() => {
-    if (!relatedWords || currentWord.word === puzzle.end) return setScale(1);
+    if (!relatedWords.length || currentWord.word === puzzle.end) return setScale(1);
 
     const { x: farthestX, y: farthestY } = getActivePositions()
       .filter(({ word, relation }) => !chain.find((chainWord) => chainWord.word === word && chainWord.relation === relation))
@@ -36,7 +36,7 @@ export default function Words() {
     setScale(Math.min(zoomFactor, 1));
   }, [getActivePositions, center, currentWord, getPosition, relatedWords, screenHeight, screenWidth, setScale, chain, puzzle.end]);
 
-  if (typeof window === 'undefined') return '';
+  // if (typeof window === 'undefined') return '';
 
   return (
     <div
