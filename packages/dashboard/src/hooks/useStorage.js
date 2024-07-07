@@ -4,7 +4,6 @@ export default function useStorage(key, defaultValue) {
   const [value, setValue] = React.useState(defaultValue);
 
   React.useEffect(() => {
-    console.log(defaultValue, key);
     if (!localStorage) return;
 
     try {

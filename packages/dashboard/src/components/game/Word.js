@@ -118,7 +118,7 @@ export default function Word({
       onClick={onClick}
       ref={wordRef}
       className={clsx(
-        'absolute hover:z-50 transition-all duration-500 p-2 rounded-md shadow-md items-center align-middle select-none outline-none appearance-none',
+        'absolute hover:z-50 transition duration-500 p-2 rounded-md shadow-md items-center align-middle select-none outline-none appearance-none',
         {
           'scale-75 grayscale-[25]': !!chain.slice(0, chain.length - 1).find((link) => link.word === word && link.relation === relation),
           'bg-ant': relation === 'antonym',
