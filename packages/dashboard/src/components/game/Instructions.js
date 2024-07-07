@@ -5,13 +5,13 @@ export default function Instructions({ end, className }) {
   return (
     <div className={clsx(
       className,
-      'absolute top-0 left-0 w-full h-full grid place-content-center font-karnak text-4xl text-center pointer-events-none',
+      'absolute top-0 left-0 w-full h-full flex flex-col justify-center font-karnak text-4xl text-center pointer-events-none',
     )}
     >
       <div className="drop-shadow-md text-white text-5xl">Get to{' '}
         <p className="text-rhyme inline">{end}</p>
       </div>
-      <div className="h-96" />
+      <div className="h-2/3" />
       <div className="drop-shadow-md text-white">by traversing{' '}
         <p className="text-syn inline">synonyms</p>{' '}
         and{' '}

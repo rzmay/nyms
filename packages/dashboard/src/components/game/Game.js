@@ -11,7 +11,6 @@ import Victory from './Victory';
 import Words from './Words';
 
 export default function Game({ puzzle }) {
-  console.log(puzzle);
   const [screenWidth, screenHeight] = useScreenSize();
   const [chain, setChain] = React.useState(readFromStorage('chain', [{ word: puzzle.start, relation: null }]));
   const [positions, setPositions] = React.useState(readFromStorage('positions', []));

@@ -57,17 +57,23 @@ module.exports.getRandomWord = async function getRandomWord() {
 module.exports.generatePuzzle = async function generatePuzzle(iterations = 5) {
   // Get a random word to start
   const startWord = await module.exports.getRandomWord();
-  const rhymesWithStart = await fetchRelatedWords(startWord, 'rhyme');
   let par = iterations;
+
+  // Generate a list of prohibited end words -- shouldn't rhyme with start or be <= 2 steps away
+  const prohibitedWords = await fetchRelatedWords(startWord, 'rhyme');
+  const initialRelated = await module.exports.getRelatedWords(startWord);
+  for (const { word } of initialRelated) {
+    prohibitedWords.push(word, ...(await module.exports.getRelatedWords(word)).map(({ word }) => word));
+  }
 
   // Recursive random traversal
   const traversed = [startWord];
   const randomTraverse = async (word, depth) => {
     if (depth <= 0) {
-      // Make sure it doesn't rhyme with start!
-      if (rhymesWithStart.includes(word)) {
+      // Make sure it's not prohibited
+      if (prohibitedWords.includes(word)) {
         par++;
-        return randomTraverse(word, depth); // One extra step if it rhymes
+        return randomTraverse(word, depth); // One extra step if it is
       }
       return word;
     }
