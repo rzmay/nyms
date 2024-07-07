@@ -3,7 +3,6 @@ import relations from 'lib/constants/relations';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
 import rectOverlap from '../../helpers/rectOverlap';
-import useScreenSize from '../../hooks/useScreenSize';
 
 export default function Word({
   word, relation = null,
@@ -11,7 +10,6 @@ export default function Word({
   const {
     currentWord, setPosition, getPosition, getActivePositions, puzzle, center, chain, setChain, relatedWords, setHoveredWord,
   } = React.useContext(NymsContext);
-  const [screenWidth, screenHeight] = useScreenSize();
   const wordRef = React.useRef(null);
 
   const isTarget = React.useMemo(() => word === puzzle.end, [puzzle.end, word]);
@@ -28,7 +26,10 @@ export default function Word({
 
   // Pick and set a position
   React.useEffect(() => {
-    if (!wordRef.current) return;
+    if (!wordRef.current || typeof window === 'undefined') return;
+
+    // Define our own here -- too important to leave up to state bullshit
+    const [screenWidth, screenHeight] = [window.innerWidth, window.innerHeight];
 
     const width = wordRef.current.offsetWidth;
     const height = wordRef.current.offsetHeight;
@@ -86,10 +87,10 @@ export default function Word({
     let it = 0;
     // eslint-disable-next-line no-loop-func
     while (it < 50 && activePositions.some((pos) => rectOverlap({
-      x,
-      y,
-      width,
-      height,
+      x: x - 10,
+      y: y - 10,
+      width: width + 20,
+      height: height + 20,
     }, pos))) {
       offset.x = radius * Math.cos(angle);
       offset.y = radius * Math.sin(angle);
@@ -110,7 +111,7 @@ export default function Word({
       width,
       height,
     });
-  }, [getActivePositions, center, position, relatedWords, relation, screenHeight, screenWidth, setPosition, word]);
+  }, [getActivePositions, center, position, relatedWords, relation, setPosition, word]);
 
   return (
     <button
@@ -130,6 +131,7 @@ export default function Word({
           'hover:shimmer hover:scale-110 hover:shadow-lg': !!onClick,
           'opacity-0': !position,
           'opacity-100': !!position,
+          'animate-fade': word !== currentWord.word,
         },
       )}
       style={{
