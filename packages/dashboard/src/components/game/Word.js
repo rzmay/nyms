@@ -131,7 +131,7 @@ export default function Word({
           'hover:shimmer hover:scale-110 hover:shadow-lg': !!onClick,
           'opacity-0': !position,
           'opacity-100': !!position,
-          'animate-fade': word !== currentWord.word,
+          'animate-fade': !chain.find(({ word: w }) => w === word),
         },
       )}
       style={{
