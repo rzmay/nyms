@@ -19,6 +19,9 @@ export default function Graphics() {
       const start = getPosition(chain[i - 1].word, chain[i - 1].relation);
       const end = getPosition(chain[i].word, chain[i].relation);
 
+      // Edge case
+      if (!start || !end) return;
+
       newLines.push({
         start: { x: start.x, y: start.y },
         end: { x: end.x, y: end.y },
@@ -30,6 +33,9 @@ export default function Graphics() {
     if (hoveredWord) {
       const start = getPosition(currentWord.word, currentWord.relation);
       const end = getPosition(hoveredWord.word, hoveredWord.relation);
+
+      // Edge case handling
+      if (!start || !end) return;
 
       newLines.push({
         start: { x: start.x, y: start.y },
