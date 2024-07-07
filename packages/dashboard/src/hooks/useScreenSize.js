@@ -4,6 +4,8 @@ export default function useScreenSize() {
   const [size, setSize] = React.useState([window?.innerWidth, window?.innerHeight]);
 
   React.useLayoutEffect(() => {
+    if (!window) return;
+
     function updateSize() {
       setSize([window.innerWidth, window.innerHeight]);
     }
