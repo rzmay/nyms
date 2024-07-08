@@ -15,12 +15,14 @@ export default function Word({
   const isTarget = React.useMemo(() => word === puzzle.end, [puzzle.end, word]);
   const position = React.useMemo(() => getPosition(word, relation), [getPosition, relation, word]);
 
-  const onClick = React.useMemo(
-    () => ((currentWord.word === word && currentWord.relation === relation) || !position
-      ? null
-      : () => setChain((chain) => (chain.find(({ word: w }) => w === word)
+  const onClick = React.useCallback(
+    () => {
+      if ((currentWord.word === word && currentWord.relation === relation) || !position) return;
+
+      setChain((chain) => (chain.find(({ word: w }) => w === word)
         ? chain.slice(0, chain.findIndex(({ word: w }) => w === word) + 1)
-        : [...chain, { word, relation }]))),
+        : [...chain, { word, relation }]));
+    },
     [currentWord, position, relation, setChain, word],
   );
 

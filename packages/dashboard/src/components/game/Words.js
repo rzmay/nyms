@@ -36,8 +36,6 @@ export default function Words() {
     setScale(Math.min(zoomFactor, 1));
   }, [getActivePositions, center, currentWord, getPosition, relatedWords, screenHeight, screenWidth, setScale, chain, puzzle.end]);
 
-  // if (typeof window === 'undefined') return '';
-
   return (
     <div
       ref={containerRef}
