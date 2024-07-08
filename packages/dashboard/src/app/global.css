@@ -53,6 +53,7 @@
 
   .shimmer::after {
     position: absolute;
+    z-index: -10;
     top: 0;
     left: -300%;
     animation: shimmer 4s ease-out infinite;

@@ -5,7 +5,7 @@ import useScreenSize from '../../hooks/useScreenSize';
 
 export default function Graphics() {
   const {
-    chain, center, currentWord, hoveredWord, scale, getPosition, positions, positionsRef,
+    chain, center, currentWord, hoveredWord, scale, getPosition, positions,
   } = React.useContext(NymsContext);
   const [screenWidth, screenHeight] = useScreenSize();
   const [maxRadius, setMaxRadius] = React.useState(0);
@@ -45,7 +45,7 @@ export default function Graphics() {
     }
 
     setLines(newLines);
-  }, [chain, currentWord, getPosition, hoveredWord, positions, positionsRef]);
+  }, [chain, currentWord, getPosition, hoveredWord, positions]);
 
   const sizeFactor = React.useMemo(() => {
     // Calculate the distance from the center to the furthest edge

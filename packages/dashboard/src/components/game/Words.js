@@ -30,8 +30,8 @@ export default function Words() {
 
     // Distance from center to edge / distance from center to farthest edge of farthest word
     const zoomFactor = Math.min(
-      (screenWidth / 2) / (Math.abs(farthestX.x - center.x) + farthestX.width / 2),
-      (screenHeight / 2) / (Math.abs(farthestY.y - center.y) + farthestY.height / 2),
+      (screenWidth / 2) / (Math.abs(farthestX.x - center.x) + (20 + farthestX.width) / 2),
+      (screenHeight / 2) / (Math.abs(farthestY.y - center.y) + (20 + farthestY.height) / 2),
     );
     setScale(Math.min(zoomFactor, 1));
   }, [getActivePositions, center, currentWord, getPosition, relatedWords, screenHeight, screenWidth, setScale, chain, puzzle.end]);

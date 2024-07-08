@@ -14,7 +14,7 @@ export default function Game({ puzzle }) {
   const [screenWidth, screenHeight] = useScreenSize();
   const [chain, setChain] = useStorage('chain', [{ word: puzzle.start, relation: null }]);
   const [positions, setPositions] = useStorage('positions', []);
-  const positionsRef = React.useRef(positions);
+  const positionsMemo = React.useMemo(() => [...positions], [positions]);
   const [hoveredWord, setHoveredWord] = React.useState(null);
   const [scale, setScale] = React.useState(1);
 
@@ -39,26 +39,25 @@ export default function Game({ puzzle }) {
   const setPosition = React.useCallback((word, relation, position) => {
     const key = getKey(word, relation);
 
-    // Update ref first
-    positionsRef.current = [
-      ...positionsRef.current.filter((position) => position.key !== key),
-      { ...position, key, word, relation },
-    ];
+    // Update memo first
+    const i = positionsMemo.findIndex(({ key: k }) => k === key);
+    if (i >= 0) positionsMemo.splice(i, 1);
+    positionsMemo.push({ ...position, key, word, relation });
 
-    return setPositions(positionsRef.current);
-  }, [getKey, setPositions]);
+    return setPositions(positionsMemo);
+  }, [getKey, positionsMemo, setPositions]);
 
   const getPosition = React.useCallback((word, relation) => {
     const key = getKey(word, relation);
 
-    return positions && positionsRef.current.find((position) => position.key === key);
-  }, [getKey, positions]);
+    return positions && positionsMemo.find((position) => position.key === key);
+  }, [getKey, positions, positionsMemo]);
 
   const getActivePositions = React.useCallback(
-    () => positions && positionsRef.current
+    () => positions && positionsMemo
       .filter(({ word, relation, key }) => chain.find((link) => (getKey(word, relation) === getKey(link.word, link.relation))
       || (relatedWords?.find((rw) => key === getKey(rw.word, rw.relation))))),
-    [chain, getKey, positions, relatedWords],
+    [chain, getKey, positions, positionsMemo, relatedWords],
   );
 
   const center = React.useMemo(() => {
@@ -86,24 +85,17 @@ export default function Game({ puzzle }) {
     setScale,
     center,
     positions,
-    positionsRef,
     getActivePositions,
     setPosition,
     getPosition,
     getKey,
   }), [chain, setChain, hoveredWord, currentWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, getActivePositions, setPosition, getPosition, getKey]);
 
-  // Update positions ref
-  React.useEffect(() => {
-    positionsRef.current = positions;
-  }, [positions]);
-
   React.useEffect(() => {
     // If not on the most recent puzzle, reset
     if (puzzle && chain?.[0].word !== puzzle.start) {
       localStorage.clear();
-      positionsRef.current = [];
-      setPositions(positionsRef.current);
+      setPositions([]);
       setHoveredWord(null);
       setScale(1);
       setChain([{ word: puzzle.start }]);

@@ -145,7 +145,7 @@ export default function Word({
       onMouseEnter={() => !!onClick && setHoveredWord({ word, relation })}
       onMouseLeave={() => !!onClick && setHoveredWord(null)}
     >
-      <span className="relative z-10">
+      <span className="relative">
         <div className="bg-gray-200 h-11 w-36 rounded-md elevated-xs font-franklin text-gray-800 text-lg flex justify-center items-center">
           {word}
         </div>
