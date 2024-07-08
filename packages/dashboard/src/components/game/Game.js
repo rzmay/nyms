@@ -103,7 +103,7 @@ export default function Game({ puzzle }) {
   }, [chain, puzzle, setChain, setPositions]);
 
   return (
-    <div className="w-full h-svh overflow-hidden">
+    <div className="w-full h-svh">
       <NymsContext.Provider value={nymsContext}>
         <Instructions end={puzzle?.end} className={clsx('transition z-10', { 'opacity-0': chain?.length >= 2, 'animate-fade': chain?.length < 2 })} />
         <Words />
