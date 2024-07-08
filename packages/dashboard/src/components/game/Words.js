@@ -6,7 +6,7 @@ import Word from './Word';
 
 export default function Words() {
   const {
-    chain, currentWord, setScale, getActivePositions, getPosition, scale, relatedWords, center, getKey, puzzle,
+    chain, currentWord, setScale, activePositions, getPosition, scale, relatedWords, center, getKey, puzzle,
   } = React.useContext(NymsContext);
   const [screenWidth, screenHeight] = useScreenSize();
   const containerRef = React.useRef(null);
@@ -16,7 +16,7 @@ export default function Words() {
     if (!relatedWords.length) return; // Never change til we got some words....
     if (currentWord.word === puzzle.end) return setScale(1);
 
-    const { x: farthestX, y: farthestY } = getActivePositions()
+    const { x: farthestX, y: farthestY } = activePositions
       .filter(({ word, relation }) => !chain.find((chainWord) => chainWord.word === word && chainWord.relation === relation))
       .reduce((farthest, next) => {
         if (!(farthest.x && farthest.y)) return { x: { ...next }, y: { ...next } };
@@ -35,7 +35,7 @@ export default function Words() {
       (screenHeight / 2) / (Math.abs(farthestY.y - center.y) + (20 + farthestY.height) / 2),
     );
     setScale(Math.min(zoomFactor, 1));
-  }, [getActivePositions, center, currentWord, getPosition, relatedWords, screenHeight, screenWidth, setScale, chain, puzzle.end]);
+  }, [activePositions, center, currentWord, getPosition, relatedWords, screenHeight, screenWidth, setScale, chain, puzzle.end]);
 
   return (
     <div

@@ -2,13 +2,13 @@ import clsx from 'clsx';
 import relations from 'lib/constants/relations';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
-import rectOverlap from '../../helpers/rectOverlap';
+import calculateOverlapVector from '../../helpers/calculateOverlapVector';
 
 export default function Word({
   word, relation = null,
 }) {
   const {
-    currentWord, lastWord, setLastWord, setPosition, loadingPositions, getPosition, getActivePositions, puzzle, center, chain, setChain, relatedWords, setHoveredWord,
+    currentWord, lastWord, setLastWord, setPosition, loadingPositions, getPosition, activePositions, puzzle, center, chain, setChain, relatedWords, setHoveredWord,
   } = React.useContext(NymsContext);
   const wordRef = React.useRef(null);
 
@@ -75,11 +75,12 @@ export default function Word({
       searchingForPosition.current = true;
 
       const i = relatedWords.findIndex((rw) => rw.word === word && rw.relation === relation);
+      console.log(i);
       const screenRadius = Math.hypot(screenWidth / 2, screenHeight / 2);
       const minRadius = Math.hypot(1.5 * width, 1.5 * height);
 
-      let radius = Math.max(minRadius, Math.sqrt(i) * (screenRadius / 7)); // Scale radius with the square root of the number of words
-      let angle = (Math.random() - 0.5) * (Math.PI / 4) + relations[relation].angle;
+      const radius = Math.max(minRadius, Math.sqrt(i) * (screenRadius / 7)); // Scale radius with the square root of the number of words
+      const angle = (Math.random() - 0.5) * (Math.PI / 3) + relations[relation].angle;
 
       let x;
       let y;
@@ -92,25 +93,46 @@ export default function Word({
       y = center.y + offset.y;
 
       let it = 0;
-      while (it < 50) {
-        const activePositions = getActivePositions();
+      while (it < i * 5) {
+        console.log(activePositions.length);
+        // eslint-disable-next-line no-loop-func
+        const overlapVector = activePositions.map((pos) => calculateOverlapVector({
+          x: x - 10,
+          y: y - 10,
+          width: width + 20,
+          height: height + 20,
+        }, pos))
+          .reduce((agg, vec) => {
+            if (vec.x !== 0) {
+              if (Math.sign(agg.x) !== Math.sign(vec.x)) {
+                agg.x += vec.x;
+              } else if (Math.abs(vec.x) > Math.abs(agg.x)) {
+                agg.x = vec.x;
+              }
+            }
+
+            if (vec.y !== 0) {
+              if (Math.sign(agg.y) !== Math.sign(vec.y)) {
+                agg.y += vec.y;
+              } else if (Math.abs(vec.y) > Math.abs(agg.y)) {
+                agg.y = vec.y;
+              }
+            }
+
+            return agg;
+          }, { x: 0, y: 0 });
 
         // Break if done
-        if (!activePositions
-          // eslint-disable-next-line no-loop-func
-          .some((pos) => rectOverlap({
-            x: x - 10,
-            y: y - 10,
-            width: width + 20,
-            height: height + 20,
-          }, pos))) break;
+        if (overlapVector.x === 0 && overlapVector.y === 0) break;
 
         it++;
-        angle += (Math.random() - 0.5) * (Math.PI / 2); // Add some randomization to the angle
-        radius = Math.max(minRadius, radius + (Math.random() - 0.5) * (screenRadius / 10)); // Add some randomization to the radius
 
-        offset.x = radius * Math.cos(angle);
-        offset.y = radius * Math.sin(angle);
+        offset.x += overlapVector.x;
+        offset.y += overlapVector.y;
+
+        // Clamp
+        offset.x = (offset.x > 0 ? 1 : -1) * Math.max(Math.abs(offset.x), center.width);
+        offset.y = (offset.y > 0 ? 1 : -1) * Math.max(Math.abs(offset.y), center.height);
 
         x = center.x + offset.x;
         y = center.y + offset.y;
@@ -130,7 +152,7 @@ export default function Word({
     };
 
     if (!searchingForPosition.current) search();
-  }, [getActivePositions, center, position, relatedWords, relation, setPosition, word, loadingPositions]);
+  }, [activePositions, center, position, relatedWords, relation, setPosition, word, loadingPositions]);
 
   return (
     <button
@@ -147,8 +169,7 @@ export default function Word({
           'bg-rhyme': relation === 'rhyme',
           'bg-null': relation === null,
           'shimmer animate-bounce origin-center': isTarget,
-          'cursor-default pointer-events-none': !onClick,
-          'hover:shimmer hover:scale-110 hover:shadow-lg': !!onClick,
+          'hover:shimmer hover:scale-110 hover:shadow-lg': currentWord.word !== word,
           'opacity-0': !position,
           'opacity-100': !!position,
           'animate-fade': !!position && !chain.find(({ word: w }) => w === word) && lastWord !== word,
@@ -160,8 +181,8 @@ export default function Word({
           left: `${position.x - (position.width / 2)}px`,
         }),
       }}
-      onMouseEnter={() => !!onClick && setHoveredWord({ word, relation })}
-      onMouseLeave={() => !!onClick && setHoveredWord(null)}
+      onMouseEnter={() => currentWord.word !== word && setHoveredWord({ word, relation })}
+      onMouseLeave={() => currentWord.word !== word && setHoveredWord(null)}
     >
       <span className="relative">
         <div className="bg-gray-200 h-11 w-36 rounded-md elevated-xs font-franklin text-gray-800 text-lg flex justify-center items-center">

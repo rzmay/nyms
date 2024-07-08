@@ -1,22 +1,22 @@
 module.exports = {
   [null]: {
-    hex: '#a3b1cc',
+    hex: '#8CFFDA',
     emoji: '🔘',
   },
   synonym: {
-    hex: '#3d6dcc',
+    hex: '#4361EE',
     emoji: '🔵',
     code: 'rel_syn',
     angle: 0,
   },
   antonym: {
-    hex: '#cc3d55',
+    hex: '#FD151B',
     emoji: '🔴',
     code: 'rel_ant',
     angle: Math.PI,
   },
   rhyme: {
-    hex: '#cc29cc',
+    hex: '#DBBBF5',
     emoji: '🟣',
     code: 'rel_rhy',
     angle: -(3 * Math.PI) / 2,

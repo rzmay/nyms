@@ -28,16 +28,15 @@ export default function Victory({ puzzle, chain }) {
 ${emojis}
 
 Try to beat my score!
+https://nyms.rzmay.com/
         `;
-    const url = 'https://nyms.rzmay.com/';
 
     if (navigator.share) {
       navigator.share({
         title: shareText,
-        url,
       });
     } else {
-      return navigator.clipboard.writeText(`${shareText}\n${url}`)
+      return navigator.clipboard.writeText(shareText)
         .then(() => {
           setCopied(true);
           setTimeout(() => setCopied(false), 5000);

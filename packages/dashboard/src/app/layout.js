@@ -20,7 +20,7 @@ export default function Layout({ children }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       </Head>
-      <body className="bg-null">
+      <body className="bg-slate-400 dark:bg-slate-800">
         <p className="absolute ml-5 mt-2 font-karnak text-4xl drop-shadow-md text-white z-50">nyms</p>
         {children}
       </body>

@@ -13,7 +13,9 @@ import Words from './Words';
 export default function Game({ puzzle }) {
   const [screenWidth, screenHeight] = useScreenSize();
   const [chain, setChain] = useStorage('chain', [{ word: puzzle.start, relation: null }]);
+
   const [positions, setPositions, loadingPositions] = useStorage('positions', []);
+
   const [hoveredWord, setHoveredWord] = React.useState(null);
   const [scale, setScale] = React.useState(1);
   const [lastWord, setLastWord] = React.useState();
@@ -36,6 +38,20 @@ export default function Game({ puzzle }) {
     return key;
   }, [chain]);
 
+  const getPosition = React.useCallback((word, relation) => {
+    const key = getKey(word, relation);
+
+    return positions.find((position) => position.key === key);
+  }, [getKey, positions]);
+
+  const activePositions = React.useMemo(
+    () => positions
+      .filter(({ key }) => chain
+        .find((link) => (key === getKey(link.word, link.relation))
+      || relatedWords?.find((rw) => key === getKey(rw.word, rw.relation)))),
+    [chain, getKey, positions, relatedWords],
+  );
+
   const setPosition = React.useCallback((word, relation, position) => {
     const key = getKey(word, relation);
 
@@ -44,24 +60,19 @@ export default function Game({ puzzle }) {
     if (i >= 0) positions.splice(i, 1);
     positions.push({ ...position, key, word, relation });
 
+    // Also w active positions
+    if (chain.find((link) => key === getKey(link.word, link.relation))
+    || relatedWords?.find((rw) => key === getKey(rw.word, rw.relation))) {
+      const i = activePositions.findIndex(({ key: k }) => k === key);
+      if (i >= 0) activePositions.splice(i, 1);
+      activePositions.push({ ...position, key, word, relation });
+    }
+
     // Now trigger re-render
     setPositions([...positions]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getKey, setPositions, JSON.stringify(positions)]);
-
-  const getPosition = React.useCallback((word, relation) => {
-    const key = getKey(word, relation);
-
-    return positions.find((position) => position.key === key);
-  }, [getKey, positions]);
-
-  const getActivePositions = React.useCallback(
-    () => positions
-      .filter(({ word, relation, key }) => chain.find((link) => (getKey(word, relation) === getKey(link.word, link.relation))
-      || (relatedWords?.find((rw) => key === getKey(rw.word, rw.relation))))),
-    [chain, getKey, positions, relatedWords],
-  );
+  }, [getKey, setPositions, chain, relatedWords, JSON.stringify(positions)]);
 
   const center = React.useMemo(() => {
     const position = getPosition(currentWord.word, currentWord.relation);
@@ -91,11 +102,11 @@ export default function Game({ puzzle }) {
     center,
     positions,
     loadingPositions,
-    getActivePositions,
+    activePositions,
     setPosition,
     getPosition,
     getKey,
-  }), [chain, setChain, hoveredWord, currentWord, lastWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, loadingPositions, getActivePositions, setPosition, getPosition, getKey]);
+  }), [chain, setChain, hoveredWord, currentWord, lastWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, loadingPositions, activePositions, setPosition, getPosition, getKey]);
 
   React.useEffect(() => {
     // If not on the most recent puzzle, reset
