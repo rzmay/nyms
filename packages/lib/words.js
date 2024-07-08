@@ -17,7 +17,7 @@ async function fetchRelatedWords(word, relationshipType) {
     },
   });
 
-  return response.data.map((entry) => entry.word).filter((word) => !/[\s-]/.test(word.trim()));
+  return response.data.map((entry) => entry.word).filter((word) => /^(?!.*[\s-])[a-zA-Z]{3,}$/.test(word.trim()));
 }
 
 module.exports.getRelatedWords = async function getRelatedWords(word, allowRhymes = false) {

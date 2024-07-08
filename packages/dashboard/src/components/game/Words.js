@@ -13,7 +13,8 @@ export default function Words() {
 
   // Zoom to fit all words
   React.useEffect(() => {
-    if (!relatedWords.length || currentWord.word === puzzle.end) return setScale(1);
+    if (!relatedWords.length) return; // Never change til we got some words....
+    if (currentWord.word === puzzle.end) return setScale(1);
 
     const { x: farthestX, y: farthestY } = getActivePositions()
       .filter(({ word, relation }) => !chain.find((chainWord) => chainWord.word === word && chainWord.relation === relation))
