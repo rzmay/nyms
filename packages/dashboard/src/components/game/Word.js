@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import relations from 'lib/constants/relations';
 import React from 'react';
+import seedrandom from 'seedrandom';
 import NymsContext from '../../context/NymsContext';
 import getWordPosition from '../../helpers/getWordPosition';
 
@@ -13,7 +14,8 @@ export default function Word({
   const wordRef = React.useRef(null);
 
   const isTarget = React.useMemo(() => word === puzzle.end, [puzzle.end, word]);
-  const position = React.useMemo(() => getPosition(word, relation), [getPosition, relation, word]);
+  const key = React.useMemo(() => getKey(word, relation), [getKey, word, relation]);
+  const position = React.useMemo(() => getPosition(key), [getPosition, key]);
 
   const onClick = React.useCallback(
     () => {
@@ -31,6 +33,9 @@ export default function Word({
   React.useEffect(() => {
     if (!wordRef.current || typeof window === 'undefined' || loadingPositions) return;
 
+    // If we already have a position, don't continue!
+    if (position) return;
+
     // Define our own here -- too important to leave up to state bullshit
     const [screenWidth, screenHeight] = [window.innerWidth, window.innerHeight];
 
@@ -39,41 +44,22 @@ export default function Word({
 
     // If start word, just make sure it's centered
     if (!relation) {
-      if (position?.x !== screenWidth / 2 || position?.y !== screenHeight / 2) setPosition(word, relation, {
+      if (position?.x !== screenWidth / 2 || position?.y !== screenHeight / 2) setPosition(key, {
         x: screenWidth / 2,
         y: screenHeight / 2,
         width,
         height,
         offset: { x: 0, y: 0 },
         center: null,
+        word,
+        relation,
       });
 
       return;
     }
 
-    // If we've already found a position, just make sure it's center is correct
-    if (position) {
-      if (
-        position.center.word === center.word
-        && position.center?.relation === center.relation
-        && (position.center.x !== center.x || position.center.y !== center.y)
-      ) {
-        setPosition(word, relation, {
-          ...position,
-          center: { ...center },
-          x: center.x + position.offset.x,
-          y: center.y + position.offset.y,
-        });
-      }
-      return;
-    }
-
-    const i = relatedWords.findIndex((rw) => rw.word === word && rw.relation === relation);
-    const screenRadius = Math.hypot(screenWidth / 2, screenHeight / 2);
-    const minRadius = Math.hypot(1.5 * width, 1.5 * height);
-
-    const radius = Math.max(minRadius, Math.sqrt(i) * (screenRadius / 7)); // Scale radius with the square root of the number of words
-    const angle = (Math.random() - 0.5) * (Math.PI / 3) + relations[relation].angle;
+    const radius = Math.hypot(width, height);
+    const angle = (seedrandom(key)() - 0.5) * (Math.PI / 3) + relations[relation].angle;
 
     const [x, y] = [radius * Math.cos(angle), radius * Math.sin(angle)];
 
@@ -92,11 +78,13 @@ export default function Word({
       center: { ...center },
       width,
       height,
+      word,
+      relation,
     };
 
-    activePositions.push({ ...positionData, word, relation, key: getKey(word, relation) });
-    setPosition(word, relation, positionData);
-  }, [activePositions, center, position, relatedWords, relation, setPosition, word, loadingPositions, getKey]);
+    activePositions.push({ ...positionData, word, relation, key });
+    setPosition(key, positionData);
+  }, [activePositions, center, position, relatedWords, relation, setPosition, word, loadingPositions, key]);
 
   return (
     <button
@@ -112,11 +100,11 @@ export default function Word({
           'bg-syn': relation === 'synonym',
           'bg-rhyme': relation === 'rhyme',
           'bg-null': relation === null,
-          'shimmer animate-bounce origin-center': isTarget,
           'hover:shimmer hover:scale-110 hover:shadow-lg': currentWord.word !== word,
           'opacity-0': !position,
           'opacity-100': !!position,
           'animate-fade': !!position && !chain.find(({ word: w }) => w === word) && lastWord !== word,
+          'shimmer animate-goal origin-center': isTarget && currentWord.word !== word,
         },
       )}
       style={{

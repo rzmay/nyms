@@ -38,11 +38,10 @@ export default function Game({ puzzle }) {
     return key;
   }, [chain]);
 
-  const getPosition = React.useCallback((word, relation) => {
-    const key = getKey(word, relation);
-
-    return positions.find((position) => position.key === key);
-  }, [getKey, positions]);
+  const getPosition = React.useCallback(
+    (key) => positions.find((position) => position.key === key),
+    [positions],
+  );
 
   const activePositions = React.useMemo(
     () => positions
@@ -52,13 +51,11 @@ export default function Game({ puzzle }) {
     [chain, getKey, positions, relatedWords],
   );
 
-  const setPosition = React.useCallback((word, relation, position) => {
-    const key = getKey(word, relation);
-
+  const setPosition = React.useCallback((key, position) => {
     // Update value first
     const i = positions.findIndex(({ key: k }) => k === key);
     if (i >= 0) positions.splice(i, 1);
-    positions.push({ ...position, key, word, relation });
+    positions.push({ ...position, key });
 
     // Now trigger re-render
     setPositions([...positions]);
@@ -67,7 +64,7 @@ export default function Game({ puzzle }) {
   }, [getKey, setPositions, chain, relatedWords, JSON.stringify(positions)]);
 
   const center = React.useMemo(() => {
-    const position = getPosition(currentWord.word, currentWord.relation);
+    const position = getPosition(getKey(currentWord.word, currentWord.relation));
     if (!position) return {
       word: currentWord.word,
       relation: currentWord.relation,
@@ -76,7 +73,7 @@ export default function Game({ puzzle }) {
     };
 
     return position;
-  }, [currentWord, getPosition, screenHeight, screenWidth]);
+  }, [currentWord.relation, currentWord.word, getKey, getPosition, screenHeight, screenWidth]);
 
   const nymsContext = React.useMemo(() => ({
     chain,

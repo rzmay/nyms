@@ -1,15 +1,18 @@
+const dayjs = require('./dayjs');
 const sheets = require('./sheets');
 
 const RANGE = 'Sheet1!A:D';
 
-module.exports.getPuzzle = async function getPuzzle() {
+module.exports.getPuzzle = async function getPuzzle(date) {
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.SPREADSHEET_ID,
     range: RANGE,
   });
   const rows = response.data.values;
 
-  const currentPuzzle = rows[rows.length - 1];
+  const currentPuzzle = date
+    ? rows.find(([day]) => day === dayjs(date).format('M/D/YYYY')) || rows[rows.length - 1]
+    : rows[rows.length - 1];
   if (!currentPuzzle) return null;
 
   return {

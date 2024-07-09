@@ -13,7 +13,7 @@ async function fetchRelatedWords(word, relationshipType) {
   const response = await datamuse.get('/words', {
     params: {
       [relations[relationshipType].code]: word,
-      max: 10, // Can't have too many
+      max: 20, // Can't have too many
     },
   });
 

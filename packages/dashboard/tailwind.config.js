@@ -18,6 +18,7 @@ module.exports = {
       animation: {
         fade: 'fadeIn .5s ease-in-out',
         shimmer: 'shimmer 4s ease-out infinite',
+        goal: 'fadeIn .5s ease-in-out, bounce 1s infinite',
         draw: 'draw .5s linear forwards',
       },
       keyframes: {

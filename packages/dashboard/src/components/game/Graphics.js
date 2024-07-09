@@ -5,7 +5,7 @@ import useScreenSize from '../../hooks/useScreenSize';
 
 export default function Graphics() {
   const {
-    chain, center, currentWord, hoveredWord, scale, getPosition, positions,
+    chain, getKey, center, currentWord, hoveredWord, scale, getPosition, positions,
   } = React.useContext(NymsContext);
   const [screenWidth, screenHeight] = useScreenSize();
   const [maxRadius, setMaxRadius] = React.useState(0);
@@ -16,8 +16,8 @@ export default function Graphics() {
 
     // Chain
     for (let i = 1; i < chain.length; i++) {
-      const start = getPosition(chain[i - 1].word, chain[i - 1].relation);
-      const end = getPosition(chain[i].word, chain[i].relation);
+      const start = getPosition(getKey(chain[i - 1].word, chain[i - 1].relation));
+      const end = getPosition(getKey(chain[i].word, chain[i].relation));
 
       // Edge case
       if (!start || !end) return;
@@ -31,8 +31,8 @@ export default function Graphics() {
 
     // Hovered word
     if (hoveredWord) {
-      const start = getPosition(currentWord.word, currentWord.relation);
-      const end = getPosition(hoveredWord.word, hoveredWord.relation);
+      const start = getPosition(getKey(currentWord.word, currentWord.relation));
+      const end = getPosition(getKey(hoveredWord.word, hoveredWord.relation));
 
       // Edge case handling
       if (!start || !end) return;
@@ -45,7 +45,7 @@ export default function Graphics() {
     }
 
     setLines(newLines);
-  }, [chain, currentWord, getPosition, hoveredWord, positions]);
+  }, [chain, currentWord, getKey, getPosition, hoveredWord, positions]);
 
   const sizeFactor = React.useMemo(() => {
     // Calculate the distance from the center to the furthest edge
