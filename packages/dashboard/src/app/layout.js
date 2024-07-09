@@ -1,4 +1,3 @@
-import relations from 'lib/constants/relations';
 import React from 'react';
 import './global.css';
 
@@ -7,10 +6,6 @@ export const metadata = {
   description: 'daily word-traversal puzzle',
   authors: [{ name: 'Robert May', url: 'https://rzmay.com' }],
   creator: 'Robert May',
-};
-
-export const viewport = {
-  themeColor: relations.null.hex,
 };
 
 export default function Layout({ children }) {
