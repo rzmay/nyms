@@ -60,14 +60,6 @@ export default function Game({ puzzle }) {
     if (i >= 0) positions.splice(i, 1);
     positions.push({ ...position, key, word, relation });
 
-    // Also w active positions
-    if (chain.find((link) => key === getKey(link.word, link.relation))
-    || relatedWords?.find((rw) => key === getKey(rw.word, rw.relation))) {
-      const i = activePositions.findIndex(({ key: k }) => k === key);
-      if (i >= 0) activePositions.splice(i, 1);
-      activePositions.push({ ...position, key, word, relation });
-    }
-
     // Now trigger re-render
     setPositions([...positions]);
 
