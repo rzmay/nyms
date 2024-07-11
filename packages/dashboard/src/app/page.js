@@ -3,9 +3,8 @@ import { getPuzzle } from 'lib/puzzles';
 import React from 'react';
 import Game from '../components/game/Game';
 
-const now = Date.now();
-
 export default async function Page() {
+  const [now] = React.useState(Date.now());
   const puzzle = await getPuzzle(now);
 
   return (
