@@ -16,8 +16,15 @@ export default function Words() {
     if (!relatedWords.length) return; // Never change til we got some words....
     if (currentWord.word === puzzle.end) return setScale(1);
 
+    const previousWord = chain[chain.length - 2];
     const { x: farthestX, y: farthestY } = activePositions
-      .filter(({ word, relation }) => !chain.find((chainWord) => chainWord.word === word && chainWord.relation === relation))
+      .filter(({ word, relation }) => {
+        const isPreviousWord = previousWord?.word === word && previousWord?.relation === relation;
+        const isChainWord = chain
+          .find((chainWord) => chainWord.word === word && chainWord.relation === relation);
+
+        return isPreviousWord || !isChainWord;
+      })
       .reduce((farthest, next) => {
         if (!(farthest.x && farthest.y)) return { x: { ...next }, y: { ...next } };
 

@@ -70,7 +70,7 @@ export default function Graphics() {
   const circles = React.useMemo(() => {
     const circles = [];
     for (let r = 100; r <= maxRadius; r += 100) {
-      circles.push(<circle key={r} cx="50%" cy="50%" r={r} stroke="#fff8" strokeWidth="0.5" fill="none" />);
+      circles.push(<circle key={r} cx="50%" cy="50%" r={r} className="stroke-slate-400 dark:stroke-slate-600" strokeWidth="0.5" fill="none" />);
     }
 
     return circles;

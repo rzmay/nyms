@@ -16,7 +16,7 @@ module.exports = {
     angle: Math.PI,
   },
   rhyme: {
-    hex: '#DBBBF5',
+    hex: '#F0ABFC',
     emoji: '🟣',
     code: 'rel_rhy',
     angle: -(3 * Math.PI) / 2,
