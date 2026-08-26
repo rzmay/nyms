@@ -22,7 +22,7 @@ export default function Instructions() {
         </div>
         <div className="h-1/2 md:h-2/3" />
         <div className="drop-shadow-md text-white">by traversing{' '}
-          <p className="text-syn inline">synonyms</p>{' '}
+          <p className="text-syn brightness-50 dark:brightness-100 inline">synonyms</p>{' '}
           and{' '}
           <p className="text-ant inline">antonyms</p>
         </div>
