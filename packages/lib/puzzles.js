@@ -1,12 +1,12 @@
 const dayjs = require('./dayjs');
 const sheets = require('./sheets');
 
-const RANGE = 'Sheet1!A:D';
+const getRange = () => `'${(process.env.SHEET_NAME || 'Sheet1').replace(/'/g, "''")}'!A:D`;
 
 module.exports.getPuzzle = async function getPuzzle(date) {
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.SPREADSHEET_ID,
-    range: RANGE,
+    range: getRange(),
   });
   const rows = response.data.values;
 
@@ -27,7 +27,7 @@ module.exports.getPuzzle = async function getPuzzle(date) {
 module.exports.writePuzzle = async function writePuzzle(puzzle) {
   return sheets.spreadsheets.values.append({
     spreadsheetId: process.env.SPREADSHEET_ID,
-    range: RANGE,
+    range: getRange(),
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     requestBody: {
