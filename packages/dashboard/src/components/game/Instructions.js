@@ -1,7 +1,10 @@
 import clsx from 'clsx';
+import rules from 'lib/constants/rules';
 import React from 'react';
 
 export default function Instructions({ end, className }) {
+  const formatter = new Intl.NumberFormat('en-US', { numberingSystem: 'spellout' });
+
   return (
     <div className={clsx(
       className,
@@ -19,7 +22,7 @@ export default function Instructions({ end, className }) {
       </div>
       <div className="drop-shadow-md text-white">You may use a{' '}
         <p className="text-rhyme inline">rhyme</p>{' '}
-        every four words
+        every {formatter.format(rules.rhymeInterval)} words
       </div>
     </div>
   );

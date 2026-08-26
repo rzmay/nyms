@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import rules from 'lib/constants/rules';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
 import useRelatedWords from '../../hooks/useRelatedWords';
@@ -26,7 +27,7 @@ export default function Game({ puzzle }) {
     [chain],
   );
 
-  const relatedWords = useRelatedWords(currentWord, chain, wordsSinceRhyme >= 4);
+  const relatedWords = useRelatedWords(currentWord, chain, wordsSinceRhyme >= rules.rhymeInterval);
 
   // Callbacks
   const getKey = React.useCallback((word, relation) => {
