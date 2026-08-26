@@ -4,8 +4,7 @@ import React from 'react';
 import Game from '../components/game/Game';
 
 export default async function Page() {
-  const [now] = React.useState(Date.now());
-  const puzzle = await getPuzzle(now);
+  const puzzle = await getPuzzle(Date.now());
 
   return (
     <Game puzzle={puzzle} />
