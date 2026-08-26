@@ -4,6 +4,7 @@ const axios = require('axios');
 const relations = require('lib/constants/relations');
 const sample = require('lodash/sample');
 const shuffle = require('lodash/shuffle');
+const rules = require('./constants/rules');
 
 const datamuse = axios.create({
   baseURL: 'https://api.datamuse.com',
@@ -13,7 +14,7 @@ async function fetchRelatedWords(word, relationshipType) {
   const response = await datamuse.get('/words', {
     params: {
       [relations[relationshipType].code]: word,
-      max: 20, // Can't have too many
+      max: rules.maxRelated, // Can't have too many
     },
   });
 
@@ -54,10 +55,15 @@ module.exports.getRandomWord = async function getRandomWord() {
   return randomWord;
 };
 
-module.exports.generatePuzzle = async function generatePuzzle(iterations = 5) {
+module.exports.generatePuzzle = async function generatePuzzle({
+  minIters = 5,
+  maxIters = 10,
+} = {}) {
+  const iterations = minIters + Math.round(Math.random() * (maxIters - minIters));
+
   // Get a random word to start
   const startWord = await module.exports.getRandomWord();
-  let par = iterations;
+  const par = iterations;
 
   // Generate a list of prohibited end words -- shouldn't rhyme with start or be <= 2 steps away
   const prohibitedWords = await fetchRelatedWords(startWord, 'rhyme');
@@ -71,10 +77,7 @@ module.exports.generatePuzzle = async function generatePuzzle(iterations = 5) {
   const randomTraverse = async (word, depth) => {
     if (depth <= 0) {
       // Make sure it's not prohibited
-      if (prohibitedWords.includes(word)) {
-        par++;
-        return randomTraverse(word, depth); // One extra step if it is
-      }
+      if (prohibitedWords.includes(word)) return null;
       return word;
     }
 
@@ -95,5 +98,5 @@ module.exports.generatePuzzle = async function generatePuzzle(iterations = 5) {
   const endWord = await randomTraverse(startWord, iterations);
 
   // Try again if no solution found for this start word
-  return endWord ? { start: startWord, end: endWord, par } : module.exports.generatePuzzle(iterations);
+  return endWord ? { start: startWord, end: endWord, par } : module.exports.generatePuzzle({ minIters, maxIters });
 };
