@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
+    "cron": "node cron.js",
     "dev": "infisical run -- nodemon index.js"
   },
   "dependencies": {
