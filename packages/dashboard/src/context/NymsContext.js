@@ -17,6 +17,7 @@ const NymsContext = createContext({
   setPosition: null,
   getPosition: null,
   getKey: null,
+  reset: null,
 });
 
 export default NymsContext;

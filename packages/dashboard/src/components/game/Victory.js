@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import relations from 'lib/constants/relations';
 import dayjs from 'lib/dayjs';
 import React from 'react';
+import NymsContext from '../../context/NymsContext';
 
 function getScoreText(chain, puzzle) {
   if (chain.length < puzzle.par) return 'Niiiiice';
@@ -16,10 +17,12 @@ function getParText(chain, puzzle) {
   return `${chain.length - puzzle.par} Over Par`;
 }
 
-export default function Victory({ puzzle, chain }) {
+export default function Victory() {
+  const { puzzle, chain, reset } = React.useContext(NymsContext);
+
   const score = chain.length;
   const rhymesUsed = React.useMemo(() => chain.filter(({ relation }) => relation === 'rhyme').length, [chain]);
-  const emojis = React.useMemo(() => chain.map(({ relation }) => relations[relation].emoji).join(''), [chain]);
+  const emojis = React.useMemo(() => chain.map(({ relation }) => relations[relation ?? null].emoji).join(''), [chain]);
   const [copied, setCopied] = React.useState(false);
 
   const onShare = React.useCallback(() => {
@@ -66,6 +69,13 @@ https://nyms.rzmay.com/
           onClick={onShare}
         >
           Share your Results
+        </button>
+        <button
+          type="button"
+          className="font-franklin bg-white mt-5 px-5 py-2 shadow-md transition text-xl text-black hover:text-gray-400 font-sans rounded-full"
+          onClick={reset}
+        >
+          Play Again
         </button>
       </div>
       <div className="fixed top-10 left-0 right-0 flex justify-center z-50">

@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import rules from 'lib/constants/rules';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
@@ -64,6 +63,14 @@ export default function Game({ puzzle }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getKey, setPositions, chain, relatedWords, JSON.stringify(positions)]);
 
+  const reset = React.useCallback(() => {
+    localStorage.clear();
+    setPositions([]);
+    setHoveredWord(null);
+    setScale(1);
+    setChain([{ word: puzzle.start, relation: null }]);
+  }, [puzzle.start, setChain, setPositions]);
+
   const center = React.useMemo(() => {
     const position = getPosition(getKey(currentWord.word, currentWord.relation));
     if (!position) return {
@@ -96,25 +103,22 @@ export default function Game({ puzzle }) {
     setPosition,
     getPosition,
     getKey,
-  }), [chain, setChain, hoveredWord, currentWord, lastWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, loadingPositions, activePositions, setPosition, getPosition, getKey]);
+    reset,
+  }), [chain, setChain, hoveredWord, currentWord, lastWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, loadingPositions, activePositions, setPosition, getPosition, getKey, reset]);
 
   React.useEffect(() => {
     // If not on the most recent puzzle, reset
     if (puzzle && chain?.[0].word !== puzzle.start) {
-      localStorage.clear();
-      setPositions([]);
-      setHoveredWord(null);
-      setScale(1);
-      setChain([{ word: puzzle.start }]);
+      reset();
     }
-  }, [chain, puzzle, setChain, setPositions]);
+  }, [chain, puzzle, reset, setChain, setPositions]);
 
   return (
     <div className="w-full h-svh overflow-hidden">
       <NymsContext.Provider value={nymsContext}>
-        <Instructions end={puzzle?.end} className={clsx('transition z-10', { 'opacity-0': chain?.length >= 2, 'animate-fade': chain?.length < 2 })} />
+        <Instructions />
         <Words />
-        <Victory chain={chain} puzzle={puzzle} />
+        <Victory />
       </NymsContext.Provider>
     </div>
   );
