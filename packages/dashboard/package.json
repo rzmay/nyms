@@ -2,9 +2,6 @@
   "name": "dashboard",
   "version": "0.0.0",
   "private": true,
-  "engines": {
-    "node": "24.x"
-  },
   "scripts": {
     "dev": "infisical run -- next dev",
     "build": "next build",
