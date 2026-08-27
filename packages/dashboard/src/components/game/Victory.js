@@ -28,6 +28,7 @@ export default function Victory() {
   const onShare = React.useCallback(() => {
     const shareText = `Nyms ${puzzle.number} ${dayjs(puzzle.date).format('M/D/YYYY')}
 
+Used ${chain.length} words (${puzzle.par - chain.length} under par)
 ${emojis}
 
 Try to beat my score!
