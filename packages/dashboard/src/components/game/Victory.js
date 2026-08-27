@@ -60,7 +60,7 @@ https://nyms.rzmay.com/
         <div className="drop-shadow-md text-gray-800 text-3xl font-karnak mb-5">
           Score: {score}
         </div>
-        <div className="drop-shadow-md saturate-200 text-rhyme text-3xl font-karnak mb-5">
+        <div className="drop-shadow-md text-rhyme saturate-200 text-3xl font-karnak mb-5">
           Used {rhymesUsed} rhyme{rhymesUsed === 1 ? '' : 's'}
         </div>
         <button

@@ -13,6 +13,16 @@ module.exports.getPuzzle = async function getPuzzle(date) {
   const currentPuzzle = date
     ? rows.find(([day]) => day === dayjs(date).format('M/D/YYYY')) || rows[rows.length - 1]
     : rows[rows.length - 1];
+
+  console.log(`
+    DEBUG PUZZLE SELECTION
+    getPuzzle(${date}) called
+    - ${date} -> ${dayjs(date).format('M/D/YYYY')}
+    - rows.find -> ${rows.find(([day]) => day === dayjs(date).format('M/D/YYYY'))}
+    - rows[rows.length - 1] -> ${rows[rows.length - 1]}
+    - OUTPUT: ${currentPuzzle}
+    `);
+
   if (!currentPuzzle) return null;
 
   return {
