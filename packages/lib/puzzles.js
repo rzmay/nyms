@@ -22,7 +22,6 @@ module.exports.getPuzzle = async function getPuzzle(date) {
     end: currentPuzzle[2],
     par: Number(currentPuzzle[3]),
     number: rows.length - 1,
-    dateUsed: date,
   };
 };
 

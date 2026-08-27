@@ -4,7 +4,7 @@ import React from 'react';
 import Game from '../components/game/Game';
 
 export default async function Page() {
-  const puzzle = await getPuzzle(Date.now());
+  const puzzle = await getPuzzle(); // Default to most recent
 
   return (
     <Game puzzle={puzzle} />
