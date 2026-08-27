@@ -46,7 +46,7 @@ https://nyms.rzmay.com/
           setTimeout(() => setCopied(false), 5000);
         });
     }
-  }, [emojis, puzzle.date, puzzle.number]);
+  }, [chain.length, emojis, puzzle.date, puzzle.number, puzzle.par]);
 
   if (chain[chain.length - 1].word !== puzzle.end) return '';
 
