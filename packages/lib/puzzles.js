@@ -14,15 +14,6 @@ module.exports.getPuzzle = async function getPuzzle(date) {
     ? rows.find(([day]) => day === dayjs(date).format('M/D/YYYY')) || rows[rows.length - 1]
     : rows[rows.length - 1];
 
-  console.log(`
-    DEBUG PUZZLE SELECTION
-    getPuzzle(${date}) called
-    - ${date} -> ${dayjs(date).format('M/D/YYYY')}
-    - rows.find -> ${rows.find(([day]) => day === dayjs(date).format('M/D/YYYY'))}
-    - rows[rows.length - 1] -> ${rows[rows.length - 1]}
-    - OUTPUT: ${currentPuzzle}
-    `);
-
   if (!currentPuzzle) return null;
 
   return {
@@ -31,6 +22,7 @@ module.exports.getPuzzle = async function getPuzzle(date) {
     end: currentPuzzle[2],
     par: Number(currentPuzzle[3]),
     number: rows.length - 1,
+    dateUsed: date,
   };
 };
 

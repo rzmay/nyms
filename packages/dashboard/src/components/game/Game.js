@@ -11,6 +11,7 @@ import Victory from './Victory';
 import Words from './Words';
 
 export default function Game({ puzzle }) {
+  console.log(puzzle);
   const [screenWidth, screenHeight] = useScreenSize();
   const [chain, setChain] = useStorage('chain', [{ word: puzzle.start, relation: null }]);
 
