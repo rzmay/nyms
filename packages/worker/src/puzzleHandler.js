@@ -18,6 +18,16 @@ module.exports = async function puzzleHandler(retry = true) {
     });
 
     console.log(`Created puzzle (${puzzle.start}) -> (${puzzle.end}) for ${day.format('M/D/YYYY')} (Par ${puzzle.par})`);
+    console.log(`Triggering cache revalidate at ${process.env.API_BASE_URL}/revalidate...`);
+
+    await fetch(`${process.env.API_BASE_URL}/revalidate`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.REVALIDATE_TOKEN}`,
+      },
+    });
+
+    console.log('Done!');
   } catch (err) {
     console.error(err);
 

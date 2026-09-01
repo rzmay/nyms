@@ -53,7 +53,6 @@ query codes, colors, and share emojis.
 ### Requirements
 
 - Node.js
-- Yarn
 - Access to the project environment variables through Infisical, or equivalent
   local environment configuration
 - A Google service account and spreadsheet for puzzle storage
@@ -61,40 +60,32 @@ query codes, colors, and share emojis.
 Install dependencies from the repository root:
 
 ```sh
-yarn install
+npm install
 ```
 
 Run the dashboard:
 
 ```sh
-yarn workspace dashboard dev
+npm run dev -w dashboard
 ```
 
 Run the puzzle worker separately when generating daily puzzles locally:
 
 ```sh
-yarn workspace worker dev
+npm run dev -w worker
 ```
-
-The worker and dashboard expect these environment variables:
-
-| Variable                       | Purpose                                          |
-| ------------------------------ | ------------------------------------------------ |
-| `SPREADSHEET_ID`               | Google Sheet containing the puzzle rows          |
-| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Google service account used by the Sheets client |
-| `GOOGLE_PRIVATE_KEY`           | Private key for that service account             |
 
 The dashboard can be built and started with:
 
 ```sh
-yarn workspace dashboard build
-yarn workspace dashboard start
+npm run build -w dashboard
+npm run start -w dashboard
 ```
 
 Lint the entire workspace with:
 
 ```sh
-yarn lint
+npm run lint
 ```
 
 ## Deployment 🚀
