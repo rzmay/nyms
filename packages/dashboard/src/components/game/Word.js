@@ -63,6 +63,14 @@ export default function Word({
 
     const [x, y] = [radius * Math.cos(angle), radius * Math.sin(angle)];
 
+    const existingReservationIndex = activePositions.findIndex(
+      ({ key: positionKey }) => positionKey === key,
+    );
+
+    if (existingReservationIndex >= 0) {
+      activePositions.splice(existingReservationIndex, 1);
+    }
+
     const cell = getWordPosition({
       x,
       y,

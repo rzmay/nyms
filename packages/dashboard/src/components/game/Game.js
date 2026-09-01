@@ -52,16 +52,14 @@ export default function Game({ puzzle }) {
   );
 
   const setPosition = React.useCallback((key, position) => {
-    // Update value first
-    const i = positions.findIndex(({ key: k }) => k === key);
-    if (i >= 0) positions.splice(i, 1);
-    positions.push({ ...position, key });
-
-    // Now trigger re-render
-    setPositions([...positions]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getKey, setPositions, chain, relatedWords, JSON.stringify(positions)]);
+    setPositions((currentPositions) => [
+      ...currentPositions.filter(({ key: currentKey }) => currentKey !== key),
+      {
+        ...position,
+        key,
+      },
+    ]);
+  }, [setPositions]);
 
   const reset = React.useCallback(() => {
     localStorage.clear();

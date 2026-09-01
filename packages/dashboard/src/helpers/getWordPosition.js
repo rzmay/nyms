@@ -54,8 +54,8 @@ function isCellVacant(x, y, width, height, padding, activePositions) {
   const testRect = {
     x,
     y,
-    width: width + padding,
-    height: height + padding,
+    width: width + 2 * padding,
+    height: height + 2 * padding,
   };
   const vacant = !activePositions.some((pos) => rectsOverlap(testRect, pos));
 
