@@ -1,6 +1,6 @@
 // app/api/revalidate/route.ts
-
 import { revalidatePath } from 'next/cache';
+import { NextResponse } from 'next/server';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function POST(request) {
@@ -16,5 +16,5 @@ export async function POST(request) {
 
   revalidatePath('/');
 
-  return Response.json({ revalidated: true });
+  return NextResponse.json({ revalidated: true });
 }

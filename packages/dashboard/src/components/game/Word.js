@@ -9,10 +9,12 @@ export default function Word({
   word, relation = null,
 }) {
   const {
-    currentWord, getKey, lastWord, setLastWord, setPosition, loadingPositions, getPosition, activePositions, puzzle, center, chain, setChain, relatedWords, setHoveredWord,
+    currentWord, getKey, lastWord, setLastWord, setPosition, loadingPositions, getPosition, activePositions, puzzle, center, chain, setChain, relatedWords, setHoveredWord, hints, setHintUsed, setVisitedWords,
   } = React.useContext(NymsContext);
   const wordRef = React.useRef(null);
 
+  const isPast = React.useMemo(() => !!chain.slice(0, chain.length - 1).find((link) => link.word === word && link.relation === relation), [chain, relation, word]);
+  const isHintWord = React.useMemo(() => hints.flatMap(({ from, to, used }) => (used ? [] : [from, to])).includes(word), [hints, word]);
   const isTarget = React.useMemo(() => word === puzzle.end, [puzzle.end, word]);
   const key = React.useMemo(() => getKey(word, relation), [getKey, word, relation]);
   const position = React.useMemo(() => getPosition(key), [getPosition, key]);
@@ -21,12 +23,16 @@ export default function Word({
     () => {
       if ((currentWord.word === word && currentWord.relation === relation) || !position) return;
 
+      const hint = hints.find((hint) => hint.from === currentWord.word && hint.to === word && hint.used === false);
+      if (hint) setHintUsed(hint);
+
       setLastWord(currentWord.word);
+      setVisitedWords((visited) => [...new Set(visited.concat(word))]);
       setChain((chain) => (chain.find(({ word: w }) => w === word)
         ? chain.slice(0, chain.findIndex(({ word: w }) => w === word) + 1)
         : [...chain, { word, relation }]));
     },
-    [currentWord.relation, currentWord.word, position, relation, setChain, setLastWord, word],
+    [currentWord, hints, position, relation, setChain, setHintUsed, setLastWord, setVisitedWords, word],
   );
 
   // Pick and set a position
@@ -57,6 +63,10 @@ export default function Word({
 
       return;
     }
+
+    // Related words need the current word's measured position before choosing a
+    // vacant cell, otherwise they can claim the start word's center on reset.
+    if (!center?.width || !center?.height) return;
 
     const radius = Math.hypot(width, height);
     const angle = (seedrandom(key)() - 0.5) * (Math.PI / 3) + relations[relation].angle;
@@ -103,7 +113,7 @@ export default function Word({
       className={clsx(
         'absolute hover:z-50 transition duration-500 p-2 rounded-md shadow-md items-center align-middle select-none outline-none appearance-none',
         {
-          'scale-75 grayscale-[25]': !!chain.slice(0, chain.length - 1).find((link) => link.word === word && link.relation === relation),
+          'scale-75 grayscale-[25]': isPast,
           'bg-ant': relation === 'antonym',
           'bg-syn': relation === 'synonym',
           'bg-rhyme': relation === 'rhyme',
@@ -112,7 +122,7 @@ export default function Word({
           'opacity-0': !position,
           'opacity-100': !!position,
           'animate-fade': !!position && !chain.find(({ word: w }) => w === word) && lastWord !== word,
-          'shimmer animate-goal origin-center': isTarget && currentWord.word !== word,
+          'shimmer animate-goal origin-center': (isTarget || isHintWord) && currentWord.word !== word,
         },
       )}
       style={{

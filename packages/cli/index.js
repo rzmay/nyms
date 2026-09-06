@@ -4,7 +4,8 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const relations = require('lib/constants/relations');
 const rules = require('lib/constants/rules');
-const { getRelatedWords, generatePuzzle } = require('lib/words');
+const { generatePuzzle } = require('lib/puzzles');
+const { getRelatedWords } = require('lib/words');
 
 async function main() {
   console.log('Starting');

@@ -1,6 +1,6 @@
 const dayjs = require('lib/dayjs');
 const { getPuzzle, writePuzzle } = require('lib/puzzles');
-const { generatePuzzle } = require('lib/words');
+const { generatePuzzle } = require('lib/puzzles');
 
 module.exports = async function puzzleHandler(retry = true) {
   const day = dayjs().startOf('day');

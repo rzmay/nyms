@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import rules from 'lib/constants/rules';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
+import HintButton from './HintButton';
 
 export default function Instructions() {
   const { chain, puzzle } = React.useContext(NymsContext);
@@ -33,12 +34,13 @@ export default function Instructions() {
       </div>
       <div className={clsx(
         { 'opacity-0': chain?.length < 2 || gameOver, 'animate-fade': chain?.length >= 2 && !gameOver },
-        'transition absolute bottom-0 ml-5 mb-2 font-karnak text-4xl drop-shadow-md text-white z-50',
+        'flex items-center transition absolute bottom-0 ml-5 mb-2 font-karnak text-4xl drop-shadow-md text-white z-50',
       )}
       >
         <div className="drop-shadow-md text-white text-3xl md:text-2xl">Get to{' '}
           <p className="text-rhyme inline">{end}</p>
         </div>
+        <HintButton />
       </div>
     </>
   );

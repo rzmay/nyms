@@ -20,15 +20,50 @@ export default function Game({ puzzle }) {
   const [scale, setScale] = React.useState(1);
   const [lastWord, setLastWord] = React.useState();
 
+  const [visitedWords, setVisitedWords] = useStorage('visited', [puzzle.start]);
+  const [hints, setHints] = useStorage('hints', []);
+  const [hintLoading, setHintLoading] = React.useState(false);
+
   const currentWord = React.useMemo(() => chain[chain.length - 1], [chain]);
   const wordsSinceRhyme = React.useMemo(
     () => (chain.length - 1) - chain.findLastIndex(({ relation }) => relation === 'rhyme'),
     [chain],
   );
 
+  // Subtract 1 from visited words length here as not to include the puzzle start
+  const hintsAvailable = React.useMemo(
+    () => Math.floor(((visitedWords.length - 1) - (hints.length * rules.hintInterval)) / rules.hintInterval),
+    [hints.length, visitedWords.length],
+  );
+
+  // Can only use a hint if you've used all the hints you've already gotten
+  const canUseHint = React.useMemo(
+    () => hintsAvailable > 0 && hints.every(({ used }) => used),
+    [hints, hintsAvailable],
+  );
+
   const relatedWords = useRelatedWords(currentWord, chain, wordsSinceRhyme >= rules.rhymeInterval);
 
-  // Callbacks
+  const getHint = React.useCallback(async () => {
+    if (!canUseHint || hintLoading) return;
+
+    setHintLoading(true);
+
+    const path = chain.map(({ word }) => word).join(',');
+    const res = await fetch(`/api/hint?path=${path}`);
+    const hint = await res.json();
+
+    setHintLoading(false);
+    setHints((hints) => [...hints, { ...hint, used: false }]);
+  }, [canUseHint, hintLoading, setHintLoading, chain, setHints]);
+
+  const setHintUsed = React.useCallback((hint) => {
+    setHints((hints) => hints.map((h) => ({
+      ...h,
+      used: h.used || h === hint || (h.from === hint.from && h.to === hint.to),
+    })));
+  }, [setHints]);
+
   const getKey = React.useCallback((word, relation) => {
     const indexInChain = chain.findIndex(({ word: w }) => w === word);
     const key = `${chain
@@ -63,11 +98,13 @@ export default function Game({ puzzle }) {
 
   const reset = React.useCallback(() => {
     localStorage.clear();
+    setVisitedWords([puzzle.start]);
+    setHints([]);
     setPositions([]);
     setHoveredWord(null);
     setScale(1);
     setChain([{ word: puzzle.start, relation: null }]);
-  }, [puzzle.start, setChain, setPositions]);
+  }, [puzzle.start, setChain, setHints, setPositions, setVisitedWords]);
 
   const center = React.useMemo(() => {
     const position = getPosition(getKey(currentWord.word, currentWord.relation));
@@ -101,8 +138,17 @@ export default function Game({ puzzle }) {
     setPosition,
     getPosition,
     getKey,
+    visitedWords,
+    setVisitedWords,
+    hints,
+    hintLoading,
+    setHints,
+    getHint,
+    setHintUsed,
+    canUseHint,
+    hintsAvailable,
     reset,
-  }), [chain, setChain, hoveredWord, currentWord, lastWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, loadingPositions, activePositions, setPosition, getPosition, getKey, reset]);
+  }), [chain, setChain, hoveredWord, currentWord, lastWord, relatedWords, wordsSinceRhyme, puzzle, scale, center, positions, loadingPositions, activePositions, setPosition, getPosition, getKey, visitedWords, setVisitedWords, hints, hintLoading, setHints, getHint, setHintUsed, canUseHint, hintsAvailable, reset]);
 
   React.useEffect(() => {
     // If not on the most recent puzzle, reset

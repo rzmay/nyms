@@ -18,18 +18,27 @@ function getParText(chain, puzzle) {
 }
 
 export default function Victory() {
-  const { puzzle, chain, reset } = React.useContext(NymsContext);
+  const { puzzle, chain, hints, reset } = React.useContext(NymsContext);
 
   const score = chain.length;
   const rhymesUsed = React.useMemo(() => chain.filter(({ relation }) => relation === 'rhyme').length, [chain]);
-  const emojis = React.useMemo(() => chain.map(({ relation }) => relations[relation ?? null].emoji).join(''), [chain]);
+  const emojis = React.useMemo(
+    () => chain.flatMap(({ word, relation }) => [
+      relations[relation ?? null].emoji,
+      ...(hints.map(({ to }) => to).includes(word) ? ['💡'] : []),
+    ]).join(''),
+    [chain, hints],
+  );
   const [copied, setCopied] = React.useState(false);
 
   const onShare = React.useCallback(() => {
     const shareText = `Nyms ${puzzle.number} ${dayjs(puzzle.date).format('M/D/YYYY')}
 
-Used ${chain.length} words (${puzzle.par - chain.length} under par)
+Used ${chain.length} words (${getParText(chain, puzzle) || 'Par!'})
 ${emojis}
+
+Used ${hints.length} hints
+Used ${rhymesUsed} rhymes
 
 Try to beat my score!
 https://nyms.rzmay.com/
@@ -46,7 +55,7 @@ https://nyms.rzmay.com/
           setTimeout(() => setCopied(false), 5000);
         });
     }
-  }, [chain.length, emojis, puzzle.date, puzzle.number, puzzle.par]);
+  }, [chain, emojis, hints.length, puzzle, rhymesUsed]);
 
   if (chain[chain.length - 1].word !== puzzle.end) return '';
 
@@ -61,19 +70,22 @@ https://nyms.rzmay.com/
         <div className="drop-shadow-md text-gray-800 text-3xl font-karnak mb-5">
           Score: {score}
         </div>
+        <div className="drop-shadow-md text-yellow-400 text-3xl font-karnak mb-5">
+          Used {hints.length} hints
+        </div>
         <div className="drop-shadow-md text-rhyme saturate-200 text-3xl font-karnak mb-5">
           Used {rhymesUsed} rhyme{rhymesUsed === 1 ? '' : 's'}
         </div>
         <button
           type="button"
-          className="font-franklin bg-black px-5 py-2 shadow-md transition text-xl text-white hover:text-gray-400 font-sans rounded-full"
+          className="bg-black px-5 py-2 shadow-md transition text-xl text-white hover:text-gray-400 font-sans rounded-full"
           onClick={onShare}
         >
           Share your Results
         </button>
         <button
           type="button"
-          className="font-franklin bg-white mt-5 px-5 py-2 shadow-md transition text-xl text-black hover:text-gray-400 font-sans rounded-full"
+          className="bg-white mt-5 px-5 py-2 shadow-md transition text-xl text-black hover:text-gray-400 font-sans rounded-full"
           onClick={reset}
         >
           Play Again
