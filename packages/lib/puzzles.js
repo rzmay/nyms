@@ -81,7 +81,7 @@ module.exports.generatePuzzle = async function generatePuzzle({
     return [null, path];
   };
 
-  const [endWord, path] = await randomTraverse(startWord, iterations, []);
+  const [endWord, path] = await randomTraverse(startWord, iterations, [startWord]);
 
   // Try again if no solution found for this start word
   return endWord ? { start: startWord, end: endWord, par, path } : generatePuzzle({ minIters, maxIters });
