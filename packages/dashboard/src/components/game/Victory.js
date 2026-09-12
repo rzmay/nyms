@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import relations from 'lib/constants/relations';
+import rules from 'lib/constants/rules';
 import dayjs from 'lib/dayjs';
 import React from 'react';
 import NymsContext from '../../context/NymsContext';
@@ -73,9 +74,11 @@ https://nyms.rzmay.com/
         <div className="drop-shadow-md text-yellow-400 text-3xl font-karnak mb-5">
           Used {hints.length} hints
         </div>
-        <div className="drop-shadow-md text-rhyme saturate-200 text-3xl font-karnak mb-5">
-          Used {rhymesUsed} rhyme{rhymesUsed === 1 ? '' : 's'}
-        </div>
+        {rules.rhymes && (
+          <div className="drop-shadow-md text-rhyme saturate-200 text-3xl font-karnak mb-5">
+            Used {rhymesUsed} rhyme{rhymesUsed === 1 ? '' : 's'}
+          </div>
+        )}
         <button
           type="button"
           className="bg-black px-5 py-2 shadow-md transition text-xl text-white hover:text-gray-400 font-sans rounded-full"

@@ -27,10 +27,12 @@ export default function Instructions() {
           and{' '}
           <p className="text-ant inline">antonyms</p>
         </div>
-        <div className="drop-shadow-md text-white">You may use a{' '}
-          <p className="text-rhyme inline">rhyme</p>{' '}
-          every {formatter.format(rules.rhymeInterval)} words
-        </div>
+        {rules.rhymes && (
+          <div className="drop-shadow-md text-white">You may use a{' '}
+            <p className="text-rhyme inline">rhyme</p>{' '}
+            every {formatter.format(rules.rhymeInterval)} words
+          </div>
+        )}
       </div>
       <div className={clsx(
         { 'opacity-0': chain?.length < 2 || gameOver, 'animate-fade': chain?.length >= 2 && !gameOver },

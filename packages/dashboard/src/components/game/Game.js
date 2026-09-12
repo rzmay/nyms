@@ -42,7 +42,7 @@ export default function Game({ puzzle }) {
     [hints, hintsAvailable],
   );
 
-  const relatedWords = useRelatedWords(currentWord, chain, wordsSinceRhyme >= rules.rhymeInterval);
+  const relatedWords = useRelatedWords(currentWord, chain, rules.rhymes && wordsSinceRhyme >= rules.rhymeInterval);
 
   const getHint = React.useCallback(async () => {
     if (!canUseHint || hintLoading) return;
