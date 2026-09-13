@@ -39,8 +39,8 @@ Used ${chain.length} words (${getParText(chain, puzzle) || 'Par!'})
 ${emojis}
 
 Used ${hints.length} hints
-Used ${rhymesUsed} rhymes
-
+${rules.rhymes ? `Used ${rhymesUsed} rhymes
+` : ''}
 Try to beat my score!
 https://nyms.rzmay.com/
         `;
